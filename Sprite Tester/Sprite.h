@@ -12,18 +12,20 @@ public:
 	void Collision(sprite Sprites[], int cSize, int me, int WIDTH, int HEIGHT);
 
 private:
-	int x,y;
+	int x, y, cX, cY;
 	int width,height;
 	int xspeed,yspeed;
 	int xdelay,ydelay;
 	int xcount,ycount;
 	float angle;
 	float timeOfCollision;
-	bool CollisionIsTrue;
-	bool SpinningSprite;
-	bool ScaredSprite;
-	bool BabySprite;
-	bool FreezeSprite;
+	float scaleDown;
+	bool scaledDownTooFar;
+	bool frozenSprite;
+	bool SpinningSprite = false;
+	bool ScaredSprite = false;
+	bool BabySprite = false;
+	bool FreezeSprite = false;
 	int curframe,maxframe,animdir;
 	int framecount,framedelay;
 	ALLEGRO_COLOR scaredColor;
