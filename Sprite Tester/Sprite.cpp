@@ -1,18 +1,24 @@
 #include <allegro5\allegro.h>
 #include <allegro5\allegro_image.h>
+#include <allegro5/allegro_native_dialog.h>
 #include <stdio.h>
 #include "Sprite.h"
 
 #include <iostream>
 using namespace std;
 
-void sprite::drawSprite()
+void sprite::drawSprite(int WIDTH, int HEIGHT)
 {
+
+	ALLEGRO_BITMAP* currentFrame = image[curframe];
+
 	if (SpinningSprite) {
-
+		float cx = al_get_bitmap_width(currentFrame) / 2.0f;
+		float cy = al_get_bitmap_height(currentFrame) / 2.0f;
+		al_draw_rotated_bitmap(currentFrame, cx, cy, x + cx, y + cy, angle, 0);
 	}
-	else if(ScaredSprite) {
-
+	else if(ScaredSprite && CollisionIsTrue && (al_get_time() - timeOfCollision < 3.0)) {
+		al_draw_tinted_bitmap(currentFrame, scaredColor, x, y, 0);
 	}
 	else if (BabySprite) {
 
@@ -20,7 +26,8 @@ void sprite::drawSprite()
 	else if (FreezeSprite) {
 
 	}
-	al_draw_bitmap(image[curframe],x,y,0);
+	
+	CollisionIsTrue = false;
 }
 
 void sprite::updatesprite()
@@ -46,6 +53,10 @@ void sprite::updatesprite()
 		curframe++;
 		if (curframe >= maxframe)
 			curframe = 0;
+	}
+
+	if (SpinningSprite) {
+		angle += 0.1f;
 	}
 }
 
@@ -87,12 +98,20 @@ void sprite::load_animated_sprite(int size)
 	//load the animated sprite
 	char s[80];
 	maxframe=size;
+	scaredColor = al_map_rgb(255, 255, 255); // no tint
+	angle = 0;
+	timeOfCollision = 0;
+	CollisionIsTrue = false;
 	setSpecialAbility();
 	for (int n=0; n<size; n++)
 	{
-		sprintf_s(s,"Alien%d.bmp",n);
+		sprintf_s(s,"kirbs%d.png",n);
 		image[n] = al_load_bitmap(s);
-		al_convert_mask_to_alpha(image[n], al_map_rgb(255, 255, 255));
+		if (!image[n]) {
+			al_show_native_message_box(nullptr, "Error", "File error", "Could not load sprite", 0, 0);
+			exit(1);
+		}
+		//al_convert_mask_to_alpha(image[n], al_map_rgb(255, 255, 255));
 	}  
 	width=al_get_bitmap_width(image[0]);
 	height=al_get_bitmap_height(image[0]);
@@ -122,5 +141,35 @@ void  sprite::setSpecialAbility() {
 	}
 	else if (rng == 3) {
 		FreezeSprite = true;
+	}
+}
+
+void sprite::Collision(sprite Sprites[], int cSize, int me, int WIDTH, int HEIGHT) {
+	for (int i = 0; i < cSize; i++) {
+		if (i != me) {
+			if (x >= Sprites[i].getX() - width && x <= Sprites[i].getX() + width) {
+				if (y >= Sprites[i].getY() - height && y <= Sprites[i].getY() + height) {
+					
+					CollisionIsTrue = true;
+					timeOfCollision = al_get_time();
+					x = rand() % WIDTH;
+					y = rand() % height;
+
+
+
+					if (ScaredSprite) {
+						int r = rand() % 256;
+						int g = rand() % 256;
+						int b = rand() % 256;
+						scaredColor = al_map_rgb(r, g, b);
+						x = rand() % WIDTH;
+						y = rand() % HEIGHT;
+					}
+					else if () {
+
+					}
+				}
+			}
+		}
 	}
 }
