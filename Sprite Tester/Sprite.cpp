@@ -75,11 +75,11 @@ void sprite::load_animated_sprite(int size)
 	//load the animated sprite
 	char s[80];
 	maxframe=size;
+	specialityPower[setSpecialAbility()];
 	for (int n=0; n<size; n++)
 	{
 		sprintf_s(s,"Alien%d.bmp",n);
 		image[n] = al_load_bitmap(s);
-
 		al_convert_mask_to_alpha(image[n], al_map_rgb(255, 255, 255));
 	}  
 	width=al_get_bitmap_width(image[0]);
@@ -96,6 +96,3 @@ sprite::~sprite()
 	for(int i = 0; i < maxframe; i++)
 		al_destroy_bitmap(image[i]);
 }
-
-
-
