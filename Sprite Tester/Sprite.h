@@ -8,8 +8,7 @@ public:
 	void drawSprite();
 	int getX(){return x;}
 	int getY(){return y;}
-	int setSpecialAbility() { return rand() % 4; }
-	bool getAbility() { return specialityPower; }
+	void setSpecialAbility();
 
 private:
 	int x,y;
@@ -18,7 +17,10 @@ private:
 	int xdelay,ydelay;
 	int xcount,ycount;
 	bool CollisionIsTrue;
-	bool specialityPower[4] = { true, true, true, true }; //0=Spining, 1= Scared, 2=Baby, 3=Freeze
+	bool SpinningSprite;
+	bool ScaredSprite;
+	bool BabySprite;
+	bool FreezeSprite;
 	int curframe,maxframe,animdir;
 	int framecount,framedelay;
 	ALLEGRO_BITMAP *image[9];

@@ -8,6 +8,18 @@ using namespace std;
 
 void sprite::drawSprite()
 {
+	if (SpinningSprite) {
+
+	}
+	else if(ScaredSprite) {
+
+	}
+	else if (BabySprite) {
+
+	}
+	else if (FreezeSprite) {
+
+	}
 	al_draw_bitmap(image[curframe],x,y,0);
 }
 
@@ -75,7 +87,7 @@ void sprite::load_animated_sprite(int size)
 	//load the animated sprite
 	char s[80];
 	maxframe=size;
-	specialityPower[setSpecialAbility()];
+	setSpecialAbility();
 	for (int n=0; n<size; n++)
 	{
 		sprintf_s(s,"Alien%d.bmp",n);
@@ -95,4 +107,20 @@ sprite::~sprite()
 {
 	for(int i = 0; i < maxframe; i++)
 		al_destroy_bitmap(image[i]);
+}
+
+void  sprite::setSpecialAbility() {
+	int rng = rand() % 4;
+	if (rng == 0) {
+		SpinningSprite = true;
+	}
+	else if (rng == 1) {
+		ScaredSprite = true;
+	}
+	else if (rng == 2) {
+		BabySprite = true;
+	}
+	else if (rng == 3) {
+		FreezeSprite = true;
+	}
 }
