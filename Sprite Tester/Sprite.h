@@ -8,7 +8,6 @@ public:
 	void bouncesprite(int SCREEN_W, int SCREEN_H);
 	void load_animated_sprite(int size, int WIDTH, int HEIGHT);
 	void drawSprite(int WIDTH, int HEIGHT);
-	static int ability;
 	void setSpecialAbility();
 	void Collision(sprite Sprites[], int cSize, int me, int WIDTH, int HEIGHT);
 

@@ -6,7 +6,6 @@
 #include "Sprite.h"
 
 using namespace std;
-int sprite::ability = 0;
 
 //constructor for a sprite
 void sprite::load_animated_sprite(int size, int WIDTH, int HEIGHT)
@@ -148,9 +147,7 @@ void sprite::bouncesprite(int SCREEN_W, int SCREEN_H)
 
 //randomly assigns a special ability to the sprite
 void  sprite::setSpecialAbility() {
-	if (ability == 4) {
-		ability = 0;
-	}
+	int ability = rand() % 4;
 
 	if (ability == 0) {
 		SpinningSprite = true;
