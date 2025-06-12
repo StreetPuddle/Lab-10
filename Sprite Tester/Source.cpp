@@ -19,7 +19,7 @@ int main(void)
 	//allegro variable
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-	sprite alien[MAX_SPRITES];
+	sprite kirbs[MAX_SPRITES];
 	ALLEGRO_TIMER *timer = NULL;
 
 	//program init
@@ -42,7 +42,7 @@ int main(void)
 	al_start_timer(timer);
 	
 	for (int i = 0; i < MAX_SPRITES; i++) {
-		alien[i].load_animated_sprite(9, width, height);
+		kirbs[i].load_animated_sprite(9, width, height);
 	}
 
 	while(!done)
@@ -50,14 +50,14 @@ int main(void)
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 
-		//place 2
+		//timer event
 		if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			for (int i = 0; i < MAX_SPRITES; i++) {
-				alien[i].bouncesprite(width, height);
+				kirbs[i].bouncesprite(width, height);
 			}
 			for (int i = 0; i < MAX_SPRITES; i++) {
-				alien[i].Collision(alien, MAX_SPRITES, i, width, height);
+				kirbs[i].Collision(kirbs, MAX_SPRITES, i, width, height);
 			}
 			redraw = true;
 			
@@ -86,17 +86,18 @@ int main(void)
 			}
 		}
 
+		//rendering block
 		if(redraw && al_is_event_queue_empty(event_queue))
 		{
 			redraw = false; 
+			al_clear_to_color(al_map_rgb(0, 0, 0));
 			for (int i = 0; i < MAX_SPRITES; i++) {
-				alien[i].updatesprite();
+				kirbs[i].updatesprite();
 			}
 			for (int i = 0; i < MAX_SPRITES; i++) {
-				alien[i].drawSprite(width, height);
+				kirbs[i].drawSprite(width, height);
 			}
 			al_flip_display();
-			al_clear_to_color(al_map_rgb(0,0,0));
 		}
 	}
 	al_destroy_event_queue(event_queue);

@@ -8,9 +8,9 @@
 using namespace std;
 int sprite::ability = 0;
 
+//constructor for a sprite
 void sprite::load_animated_sprite(int size, int WIDTH, int HEIGHT)
 {
-	//load the animated sprite
 	x = rand() % WIDTH;
 	y = rand() % HEIGHT;
 	char s[80];
@@ -21,7 +21,7 @@ void sprite::load_animated_sprite(int size, int WIDTH, int HEIGHT)
 	scaleDown = 1.0f;
 	frozenSprite = false;
 	scaledDownTooFar = false;
-	for (int n = 0; n < size; n++)
+	for (int n = 0; n < size; n++)//frames for animation
 	{
 		sprintf_s(s, "kirbs%d.png", n);
 		image[n] = al_load_bitmap(s);
@@ -38,12 +38,14 @@ void sprite::load_animated_sprite(int size, int WIDTH, int HEIGHT)
 	framecount = 0;
 }
 
+//sprite deconstructor
 sprite::~sprite()
 {
 	for (int i = 0; i < maxframe; i++)
 		al_destroy_bitmap(image[i]);
 }
 
+//renders current frame of sprite and with its ability
 void sprite::drawSprite(int WIDTH, int HEIGHT)
 {
 	
@@ -52,32 +54,33 @@ void sprite::drawSprite(int WIDTH, int HEIGHT)
 	}
 	ALLEGRO_BITMAP* currentFrame = image[curframe];
 
-	if (SpinningSprite) {
+	if (SpinningSprite) {//rotates
 		al_draw_rotated_bitmap(currentFrame, width / 2.0f, height / 2.0f, x + width / 2.0f, y + height / 2.0f, angle, 0);
 	}
-	else if(ScaredSprite && (al_get_time() - timeOfCollision < 3.0)) {
+	else if(ScaredSprite && (al_get_time() - timeOfCollision < 3.0)) {//changes color for 3 seconds
 		al_draw_tinted_bitmap(currentFrame, scaredColor, x, y, 0);
 		//cout << "scared!\n";//test line
 	}
-	else if (BabySprite && (al_get_time() - timeOfCollision < 10.0)) {
+	else if (BabySprite && (al_get_time() - timeOfCollision < 10.0)) {//shrinks for 10 seconds
 		al_draw_scaled_bitmap(currentFrame, 0, 0, width, height, x, y, width * scaleDown, height * scaleDown, 0);
 		//cout << "shrinking\n";//test line
 	}
-	else if (FreezeSprite && (al_get_time() - timeOfCollision < 5.0)) {
+	else if (FreezeSprite && (al_get_time() - timeOfCollision < 5.0)) {//freezes for 5 seconds
 		al_draw_bitmap(currentFrame, x, y, 0);
 		//cout << "FROZEN\n";//test line
 	}
-	else {
+	else {//default
 		al_draw_bitmap(currentFrame, x, y, 0);
 	}
 }
 
+//updates logic for sprites based on their ability
 void sprite::updatesprite()
 {
-	if (SpinningSprite) {
+	if (SpinningSprite) {//increments angle to rotate
 		angle += 0.1f;
 	}
-	else if (FreezeSprite && frozenSprite) {
+	else if (FreezeSprite && frozenSprite) {//freezes sprite
 		if (al_get_time() - timeOfCollision > 5.0) {
 			frozenSprite = false;
 		}
@@ -100,7 +103,7 @@ void sprite::updatesprite()
 		y += yspeed;
 	}
 
-	if (framecount++ > framedelay)
+	if (framecount++ > framedelay)//resets frame loop
 	{
 		framecount = 0;
 		curframe++;
@@ -109,6 +112,7 @@ void sprite::updatesprite()
 	}
 }
 
+//bounces sprite off screen edges
 void sprite::bouncesprite(int SCREEN_W, int SCREEN_H)
 {
 	//simple screen bouncing behavior
@@ -170,6 +174,7 @@ void  sprite::setSpecialAbility() {
 	}
 }
 
+//detects collision and updates sprites with their respective ability and records their time of collision
 void sprite::Collision(sprite Sprites[], int cSize, int me, int WIDTH, int HEIGHT) {
 	for (int i = 0; i < cSize; i++) {
 		if (i != me && !scaledDownTooFar) {
