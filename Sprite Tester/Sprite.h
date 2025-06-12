@@ -4,15 +4,16 @@ public:
 	~sprite();
 	void updatesprite();
 	void bouncesprite(int SCREEN_W, int SCREEN_H);
-	void load_animated_sprite(int size);
+	void load_animated_sprite(int size, int WIDTH, int HEIGHT);
 	void drawSprite(int WIDTH, int HEIGHT);
 	int getX(){return x;}
 	int getY(){return y;}
+	static int ability;
 	void setSpecialAbility();
 	void Collision(sprite Sprites[], int cSize, int me, int WIDTH, int HEIGHT);
 
 private:
-	int x, y, cX, cY;
+	int x, y;
 	int width,height;
 	int xspeed,yspeed;
 	int xdelay,ydelay;

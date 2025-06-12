@@ -3,13 +3,16 @@
 #include <allegro5/allegro_native_dialog.h>
 #include <stdio.h>
 #include "Sprite.h"
-
 #include <iostream>
-using namespace std;
 
-void sprite::load_animated_sprite(int size)
+using namespace std;
+int sprite::ability = 0;
+
+void sprite::load_animated_sprite(int size, int WIDTH, int HEIGHT)
 {
 	//load the animated sprite
+	x = rand() % WIDTH;
+	y = rand() % HEIGHT;
 	char s[80];
 	maxframe = size;
 	scaredColor = al_map_rgb(255, 255, 255);
@@ -43,21 +46,21 @@ sprite::~sprite()
 
 void sprite::drawSprite(int WIDTH, int HEIGHT)
 {
-
+	
 	if (scaledDownTooFar) {
 		return;
 	}
 	ALLEGRO_BITMAP* currentFrame = image[curframe];
 
 	if (SpinningSprite) {
-		al_draw_rotated_bitmap(currentFrame, this->width / 2.0f, this->height / 2.0f, x + this->width / 2.0f, y + this->height / 2.0f, angle, 0);
+		al_draw_rotated_bitmap(currentFrame, width / 2.0f, height / 2.0f, x + width / 2.0f, y + height / 2.0f, angle, 0);
 	}
 	else if(ScaredSprite && (al_get_time() - timeOfCollision < 3.0)) {
 		al_draw_tinted_bitmap(currentFrame, scaredColor, x, y, 0);
 		//cout << "scared!\n";//test line
 	}
 	else if (BabySprite && (al_get_time() - timeOfCollision < 10.0)) {
-		al_draw_scaled_bitmap(currentFrame, 0, 0, this->width, this->height, x, y, this->width * scaleDown, this->height * scaleDown, 0);
+		al_draw_scaled_bitmap(currentFrame, 0, 0, width, height, x, y, width * scaleDown, height * scaleDown, 0);
 		//cout << "shrinking\n";//test line
 	}
 	else if (FreezeSprite && (al_get_time() - timeOfCollision < 5.0)) {
@@ -67,7 +70,6 @@ void sprite::drawSprite(int WIDTH, int HEIGHT)
 	else {
 		al_draw_bitmap(currentFrame, x, y, 0);
 	}
-	
 }
 
 void sprite::updatesprite()
@@ -140,24 +142,31 @@ void sprite::bouncesprite(int SCREEN_W, int SCREEN_H)
 
 }
 
+//randomly assigns a special ability to the sprite
 void  sprite::setSpecialAbility() {
-	
-	int rng = rand() % 4;
-	if (rng == 0) {
+	if (ability == 4) {
+		ability = 0;
+	}
+
+	if (ability == 0) {
 		SpinningSprite = true;
-		cout << "SpinningSprite assigned\n";
+		ability++;
+		//cout << "SpinningSprite assigned\n";
 	}
-	else if (rng == 1) {
+	else if (ability == 1) {
 		ScaredSprite = true;
-		cout << "ScaredSprite assigned\n";
+		ability++;
+		//cout << "ScaredSprite assigned\n";
 	}
-	else if (rng == 2) {
+	else if (ability == 2) {
 		BabySprite = true;
-		cout << "BabySprite assigned\n";
+		ability++;
+		//cout << "BabySprite assigned\n";
 	}
-	else if (rng == 3) {
+	else if (ability == 3) {
 		FreezeSprite = true;
-		cout << "FreezeSprite assigned\n";
+		ability++;
+		//cout << "FreezeSprite assigned\n";
 	}
 }
 
@@ -168,6 +177,7 @@ void sprite::Collision(sprite Sprites[], int cSize, int me, int WIDTH, int HEIGH
 				if (y >= Sprites[i].getY() - height && y <= Sprites[i].getY() + height) {
 					
 					timeOfCollision = al_get_time();
+					Sprites[i].timeOfCollision = al_get_time();
 					x = rand() % WIDTH;
 					y = rand() % height;
 
@@ -179,17 +189,41 @@ void sprite::Collision(sprite Sprites[], int cSize, int me, int WIDTH, int HEIGH
 						x = rand() % WIDTH;
 						y = rand() % HEIGHT;
 					}
-					else if (BabySprite) {
+					if (Sprites[i].ScaredSprite) {
+						float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+						float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+						float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+						Sprites[i].scaredColor = al_map_rgba_f(r, g, b, 1);
+						Sprites[i].x = rand() % WIDTH;
+						Sprites[i].y = rand() % HEIGHT;
+					}
+					if (BabySprite && !scaledDownTooFar) {
 						scaleDown /= 2;
 						x = rand() % WIDTH;
 						y = rand() % HEIGHT;
-						if (scaleDown <= 0) {
+						if (scaleDown <= 0.1f) {
 							scaledDownTooFar = true;
+							x = -(width - 10);
+							y = -(height - 10);
 							cout << "A sprite has vanished into thin air!" << endl;
 						}
 					}
-					else if (FreezeSprite) {
+					if (Sprites[i].BabySprite && !Sprites[i].scaledDownTooFar) {
+						Sprites[i].scaleDown /= 2;
+						Sprites[i].x = rand() % WIDTH;
+						Sprites[i].y = rand() % HEIGHT;
+						if (Sprites[i].scaleDown <= 0.1f) {
+							Sprites[i].scaledDownTooFar = true;
+							Sprites[i].x = -(Sprites[i].width - 10);
+							Sprites[i].y = -(Sprites[i].height - 10);
+							cout << "A sprite has vanished into thin air!" << endl;
+						}
+					}
+					if (FreezeSprite) {
 						frozenSprite = true;
+					}
+					if (Sprites[i].FreezeSprite) {
+						Sprites[i].frozenSprite = true;
 					}
 				}
 			}

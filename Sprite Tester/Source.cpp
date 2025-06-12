@@ -12,7 +12,7 @@ int main(void)
 	bool done = false;
 	bool redraw = true;
 	const int FPS = 60;
-	const int MAX_SPRITES = 2;
+	const int MAX_SPRITES = 4;
 	srand(time(NULL));
 
 
@@ -21,7 +21,6 @@ int main(void)
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	sprite alien[MAX_SPRITES];
 	ALLEGRO_TIMER *timer = NULL;
-
 
 	//program init
 	if(!al_init())										//initialize Allegro
@@ -43,13 +42,14 @@ int main(void)
 	al_start_timer(timer);
 	
 	for (int i = 0; i < MAX_SPRITES; i++) {
-		alien[i].load_animated_sprite(9);
+		alien[i].load_animated_sprite(9, width, height);
 	}
 
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
+
 		//place 2
 		if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
@@ -88,8 +88,6 @@ int main(void)
 
 		if(redraw && al_is_event_queue_empty(event_queue))
 		{
-
-
 			redraw = false; 
 			for (int i = 0; i < MAX_SPRITES; i++) {
 				alien[i].updatesprite();
@@ -103,7 +101,7 @@ int main(void)
 	}
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(display);						//destroy our display object
-
+	al_destroy_timer(timer);
 	return 0;
 }
 
