@@ -2,8 +2,8 @@
 #include <allegro5\allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <stdio.h>
-#include "Sprite.h"
 #include <iostream>
+#include "Sprite.h"
 
 using namespace std;
 int sprite::ability = 0;

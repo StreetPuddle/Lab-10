@@ -104,4 +104,3 @@ int main(void)
 	al_destroy_timer(timer);
 	return 0;
 }
-
